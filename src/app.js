@@ -1,11 +1,13 @@
 'use strict';
 
 const express = require('express');
+const cors = require('cors');
 require('./db/mongoose'); // calling require ensures that the file will run, ensures mongoose connects to the db
 const userRouter = require('./routers/user');
 const taskRouter = require('./routers/task');
 const app = express();
 
+app.use(cors());
 app.use(express.json()); // automatically parses incoming JSON as an object
 app.use(userRouter); // registering the userRouter
 app.use(taskRouter);
