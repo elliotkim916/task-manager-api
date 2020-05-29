@@ -8,6 +8,10 @@ const taskSchema = new mongoose.Schema({
     trim: true,
     required: true
   },
+  details: {
+    type: String,
+    trim: true
+  },
   completed: {
     type: Boolean,
     default: false
