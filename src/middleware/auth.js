@@ -13,7 +13,6 @@ const auth = async (req, res, next) => {
       throw new Error();
     }
 
-    // storing the user variable in req.user & token variable in req.token
     req.user = user;
     req.token = token;
     next();

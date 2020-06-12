@@ -41,10 +41,10 @@ router.get('/tasks', auth, async (req, res) => {
     await user.populate({
       path: 'tasks',
       match,
-      options: { // limit and skip are used for pagination
+      options: {
         limit: parseInt(req.query.limit),
         skip: parseInt(req.query.skip),
-        sort // -1 is descending order, 1 is ascending order
+        sort 
       }
     }).execPopulate();
     res.send(user.tasks);

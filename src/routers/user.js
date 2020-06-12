@@ -26,7 +26,6 @@ router.post('/users/login', async (req, res) => {
     const user = await User.findByCredentials(req.body.email, req.body.password);
     const token = await user.generateAuthToken();
     res.send({ user, token }); 
-    // when we call res.send, JSON.stringify gets called on both the user and token
   } catch(e) {
     res.status(400).send();
   }
@@ -56,26 +55,10 @@ router.get('/users/me', auth, async (req, res) => {
   res.send(req.user);
 });
 
-// router.get('/users/:id', async (req, res) => {
-//   const _id = req.params.id;
-
-//   try {
-//     const user = await User.findById(_id);
-//     if (!user) {
-//       return res.status(404).send();
-//     }
-
-//     res.send(user);
-//   } catch(e) {
-//     res.status(500).send(e);
-//   }
-// });
-
 router.patch('/users/me', auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'age'];
   const isValidOperation = updates.every(update => {
-    // every() method tests whether all elements in the array pass the test implemented by provided function, returns boolean
     return allowedUpdates.includes(update);
   });
 
@@ -83,14 +66,7 @@ router.patch('/users/me', auth, async (req, res) => {
     return res.status(400).send({ error: 'Invalid updates! '});
   }
 
-  try {
-    // const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    // new: true will return the new user as opposed to the existing one that was found before the update
-    // runValidators: true will make sure we run validation for the update
-
-    // certain mongoose queries bypass more advanced features like middleware 
-    // meaning if we want to use them consistently, we have to do a little restructuring
-    
+  try {    
     updates.forEach(update => req.user[update] = req.body[update]);
     await req.user.save();
     res.send(req.user);
@@ -101,7 +77,7 @@ router.patch('/users/me', auth, async (req, res) => {
 
 router.delete('/users/me', auth, async (req, res) => {
   try {
-    await req.user.remove(); // remove method from mongoose
+    await req.user.remove(); 
     sendCancellationEmail(req.user.email, req.user.name);
     res.send(req.user);
   } catch(e) {
@@ -115,7 +91,6 @@ const upload = multer({
     fileSize: 1000000
   },
   fileFilter(req, file, callback) {
-    // allows us to filter files by file type
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
       return callback(new Error('File must be jpg, jpeg, or in png format..'));
     } 
@@ -124,8 +99,6 @@ const upload = multer({
   }
 });
 
-// for Creating and Updating avatars
-// multer will look for a file called avatar based on string in .single
 router.post('/users/me/avatar', auth, upload.single('avatar'), async  (req, res) => {
   const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer();
   req.user.avatar = buffer;

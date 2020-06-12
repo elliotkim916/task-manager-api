@@ -2,15 +2,14 @@
 
 const express = require('express');
 const cors = require('cors');
-require('./db/mongoose'); // calling require ensures that the file will run, ensures mongoose connects to the db
+require('./db/mongoose'); 
 const userRouter = require('./routers/user');
 const taskRouter = require('./routers/task');
 const app = express();
 
 app.use(cors());
-app.use(express.json()); // automatically parses incoming JSON as an object
-app.use(userRouter); // registering the userRouter
+app.use(express.json());
+app.use(userRouter); 
 app.use(taskRouter);
 
-// refactored, created app.js to allow us to use the express application without calling app.listen for testing purposes
 module.exports = app;
